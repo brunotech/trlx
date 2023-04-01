@@ -60,11 +60,11 @@ class ILQLModel(BaseRLModel):
         )
 
     def get_components(self) -> Dict[str, any]:
-        components = {
-            "model" : self.model,
-            "opt" : self.opt,
-            "scheduler" : self.scheduler} if self.train_mode else {"model" : self.model}
-        return components
+        return (
+            {"model": self.model, "opt": self.opt, "scheduler": self.scheduler}
+            if self.train_mode
+            else {"model": self.model}
+        )
 
     def learn(self):
         timer = Clock()
@@ -78,7 +78,7 @@ class ILQLModel(BaseRLModel):
         )
 
         opt_steps = 0
-        for epoch in range(self.config.train.epochs):
+        for _ in range(self.config.train.epochs):
             evals_stats = {}
             logs = {}
             for batch in train_dataloader:
@@ -105,7 +105,7 @@ class ILQLModel(BaseRLModel):
 
                         if self.stats_fn:
                             eval_stats = self.stats_fn(samples)
-                            logs.update(eval_stats)
+                            logs |= eval_stats
 
                         if self.tokenizer:
                             texts = self.tokenizer.batch_decode(samples, skip_special_tokens=True)
@@ -113,9 +113,8 @@ class ILQLModel(BaseRLModel):
                             logs['samples'] = wandb.Table(columns=['samples', 'reward'], rows=pairs[:16])
                             if os.environ.get('DEBUG'):
                                 print(f'\n'.join([f'[{reward:.2f}] {text}' for text, reward in pairs[:10]]))
-                        else:
-                            if os.environ.get('DEBUG'):
-                                print(samples)
+                        elif os.environ.get('DEBUG'):
+                            print(samples)
 
                         logs['reward'] = reward
 

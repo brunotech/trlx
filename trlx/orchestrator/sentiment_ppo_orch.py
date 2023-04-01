@@ -31,5 +31,4 @@ class PPOSentimentOrchestrator(PPOOrchestrator):
 				"batch_size": self.chunk_size,
 			}
 		pipe_outputs = self.sentiment_pipe(texts, **sent_kwargs)
-		scores = torch.tensor([output[1]["score"] for output in pipe_outputs])
-		return scores
+		return torch.tensor([output[1]["score"] for output in pipe_outputs])

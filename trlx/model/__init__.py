@@ -99,7 +99,7 @@ class BaseRLModel:
         components = self.get_components()
         for name in components:
             try:
-                torch.save(components[name], os.path.join(path, name) + ".pt")
+                torch.save(components[name], f"{os.path.join(path, name)}.pt")
             except:
                 print(f"Failed to save component: {name}, continuing.")
 
@@ -109,11 +109,13 @@ class BaseRLModel:
         """
 
         path = os.path.join(fp, title)
-        
+
         components = self.get_components()
         for name in components:
             try:
-                components[name] = torch.load(os.path.join(path, name) + ".pt", map_location = "cpu")
+                components[name] = torch.load(
+                    f"{os.path.join(path, name)}.pt", map_location="cpu"
+                )
             except:
                 print(f"Failed to load component: {name}, continuing.")
 

@@ -73,8 +73,7 @@ class AcceleratePPOModel(AccelerateRLModel):
 
         pg_loss = torch.mean(torch.max(pg_losses, pg_losses2))
 
-        model_loss = pg_loss + self.config.method.vf_coef * vf_loss
-        return model_loss
+        return pg_loss + self.config.method.vf_coef * vf_loss
 
     def post_epoch_callback(self):
         #TODO(dahoas): are experiences being made for dataloaders on each process or same dataloader

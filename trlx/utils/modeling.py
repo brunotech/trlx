@@ -15,8 +15,7 @@ def clip_by_value(x, tensor_min, tensor_max):
     Tensor extenstion to torch.clamp
     https://github.com/pytorch/pytorch/issues/2793#issuecomment-428784713
     """
-    clipped = torch.max(torch.min(x, tensor_max), tensor_min)
-    return clipped
+    return torch.max(torch.min(x, tensor_max), tensor_min)
 
 
 def logprobs_from_logits(logits, labels):
@@ -24,5 +23,4 @@ def logprobs_from_logits(logits, labels):
     See: https://github.com/pytorch/pytorch/issues/563#issuecomment-330103591
     """
     logp = F.log_softmax(logits, dim=2)
-    logpy = torch.gather(logp, 2, labels.unsqueeze(2)).squeeze(-1)
-    return logpy
+    return torch.gather(logp, 2, labels.unsqueeze(2)).squeeze(-1)

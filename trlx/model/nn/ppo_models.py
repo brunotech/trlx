@@ -53,10 +53,7 @@ class ValueHead(nn.Module):
         self.flatten = nn.Flatten()
 
     def forward(self, hidden_states, cls_index=None):
-        if self.detach_head:
-            output = hidden_states.detach()
-        else:
-            output = hidden_states
+        output = hidden_states.detach() if self.detach_head else hidden_states
         output = self.first_dropout(output)
         output = self.summary(output)
         output = self.activation(output)
@@ -116,16 +113,16 @@ class GPT2HeadWithValueModel(GPT2PreTrainedModel):
         value = self.v_head(hidden_states).squeeze(-1)
 
 
-        if not return_dict:
-            outputs = (lm_logits,) + transformer_outputs[1:] + (value,)
-            return outputs
-
-        return CausalLMOutputWithCrossAttentions(
-            loss=loss,
-            logits=lm_logits,
-            past_key_values=transformer_outputs.past_key_values,
-            hidden_states=transformer_outputs.hidden_states,
-            attentions=transformer_outputs.attentions,
-            cross_attentions=transformer_outputs.cross_attentions,
-            value=value,
+        return (
+            CausalLMOutputWithCrossAttentions(
+                loss=loss,
+                logits=lm_logits,
+                past_key_values=transformer_outputs.past_key_values,
+                hidden_states=transformer_outputs.hidden_states,
+                attentions=transformer_outputs.attentions,
+                cross_attentions=transformer_outputs.cross_attentions,
+                value=value,
+            )
+            if return_dict
+            else (lm_logits,) + transformer_outputs[1:] + (value,)
         )

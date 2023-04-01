@@ -77,9 +77,6 @@ class PPORolloutStorage(BaseRolloutStore):
                     torch.stack([elem.values for elem in elems]),
                     torch.stack([elem.rewards for elem in elems])
             )
-            if prep_fn is not None:
-                return prep_fn(res)
-            else:
-                return res
+            return prep_fn(res) if prep_fn is not None else res
 
         return DataLoader(self, batch_size, shuffle, collate_fn = collate_fn, num_workers = num_workers)

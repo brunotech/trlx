@@ -71,9 +71,6 @@ class AccelerateRolloutStorage(BaseRolloutStore):
                     torch.stack([elem.output_tokens for elem in elems]),
                     torch.stack([elem.rewards for elem in elems])  # Assumes token tensors all same size
             )
-            if prep_fn is not None:
-                return prep_fn(res)
-            else:
-                return res
-        
+            return prep_fn(res) if prep_fn is not None else res
+
         return DataLoader(self, batch_size, shuffle, collate_fn = collate_fn, num_workers = num_workers)

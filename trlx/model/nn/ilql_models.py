@@ -39,8 +39,7 @@ class QVModel(nn.Module):
 
         # enable zero3 init within from_pretrained
         if os.environ.get('DEEPSPEED_ZERO_STAGE', '0') == '3':
-            config_path = os.environ.get('DEEPSPEED_CONFIG_FILE', '')
-            if config_path:
+            if config_path := os.environ.get('DEEPSPEED_CONFIG_FILE', ''):
                 _hfconfig = transformers.deepspeed.HfDeepSpeedConfig(config_path)
 
         if isinstance(config, PretrainedConfig):
@@ -212,12 +211,12 @@ class QVModel(nn.Module):
         stats = {}
         for name, xs in tensors.items():
             xs = th.vstack(xs)
-            stats.update({
+            stats |= {
                 f'{name}-min': xs.min(),
                 f'{name}-max': xs.max(),
                 f'{name}-std': xs.std(),
                 f'{name}-avg': xs.mean(),
-            })
+            }
 
         return query, stats
 

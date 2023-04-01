@@ -81,11 +81,11 @@ class AccelerateRLModel(BaseRLModel):
         return response_text
 
     def get_components(self) -> Dict[str, any]:
-        components = {
-            "model" : self.model,
-            "opt" : self.opt,
-            "scheduler" : self.scheduler} if self.train_mode else {"model" : self.model}
-        return components
+        return (
+            {"model": self.model, "opt": self.opt, "scheduler": self.scheduler}
+            if self.train_mode
+            else {"model": self.model}
+        )
 
     @abstractmethod
     def get_arch(config: TRLConfig):
